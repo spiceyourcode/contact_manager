@@ -1,7 +1,8 @@
 // importing the express server 
-const express = require("express");
-const dotenv = require("dotenv");
-const morgan = require("morgan");
+import express from "express";
+import morgan from "morgan";
+import dotenv from "dotenv";
+import contactRoutes from "./routes/contactRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ app.use(morgan("dev"));
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 })
-app.get("/api/contacts", (req, res) => {
-    res.json({message: "welcome to the contacts API"});
-});
+
+// using the middlewares
+
+app.use("/api/contacts", contactRoutes);
