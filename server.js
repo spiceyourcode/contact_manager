@@ -10,6 +10,7 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(morgan("dev"));
+app.use("/api/contacts", contactRoutes);
 
 
 app.listen(port, () => {
@@ -17,5 +18,3 @@ app.listen(port, () => {
 })
 
 // using the middlewares
-
-app.use("/api/contacts", contactRoutes);

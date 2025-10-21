@@ -1,24 +1,21 @@
 import { Router } from "express";
 const router = Router();
+import { 
+    getContacts,
+    getContact,
+    createContact,
+    updateContact,
+    deleteContact,
+} from "../controllers/contactController.js";
 
-router.get("/", (_req, res) => {
-   res.status(200).json({message: "welcome to the contacts API"});
-});
+router.get("/", getContacts);
 
-router.get(`/:id`, (req, res) => {
-    res.status(200).json({message: `contact with id ${req.params.id}`});
-});
+router.get(`/:id`, getContact);
 
-router.post('/', (req, res) => {
-    res.status(201).json({message: "contact created"});
-});
+router.post('/', createContact);
 
-router.put(`/:id`, (req, res) => {
-    res.status(200).json({message: `contact with id ${req.params.id} updated`});
-});
+router.put(`/:id`, updateContact);
 
-router.delete(`/:id`, (req, res) => {
-    res.status(200).json({message: `contact with id ${req.params.id} deleted`});
-});
+router.delete(`/:id`, deleteContact)
 
 export default router;
