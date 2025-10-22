@@ -8,14 +8,11 @@ import {
     deleteContact,
 } from "../controllers/contactController.js";
 
+// CRUD operation routes 
 router.get("/", getContacts);
-
-router.get(`/:id`, getContact);
-
-router.post('/', createContact);
-
-router.put(`/:id`, updateContact);
-
-router.delete(`/:id`, deleteContact)
+router.post("/", createContact);
+router.get("/:id", getContact);
+router.put("/:id", updateContact);
+router.delete("/:id", deleteContact);
 
 export default router;
