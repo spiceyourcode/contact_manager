@@ -1,4 +1,4 @@
-import constants from "../constants";
+import constants from "../constants.js";
 import asyncHandler from "express-async-handler"
 
 //@desc Get all contacts 

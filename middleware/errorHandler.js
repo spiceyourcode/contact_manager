@@ -1,7 +1,7 @@
 // This middleware handles all the errors in the app 
 // Throws a json response with detailed error
-import constants from "../constants";
-const errorHandle = (err, req, res, next) => {
+import constants from "../constants.js";
+const errorHandler = (err, req, res, next) => {
     // checks for the status code adn defaults to 500 if none is set
     const statusCode = res.statusCode ? res.statusCode : constants.INTERNAL_SERVER_ERROR;
     switch (statusCode) {
@@ -45,4 +45,4 @@ const errorHandle = (err, req, res, next) => {
     }
 }
 
-export default errorHandle;
+export default errorHandler;
