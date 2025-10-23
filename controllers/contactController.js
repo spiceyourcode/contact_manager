@@ -24,9 +24,17 @@ const getContact = async (req, res) =>{
 //@desc creating a contact 
 //@route POST /api/contacts
 //@access public
-const createContact = async (req, res)=>{
+const createContact = (req, res)=>{
     try{
-        await res.status(201).json({message: `Contact with id ${req.params.id} created`})
+        const {name, email} = req.body;
+        if(!name || !email){
+            res.status(400);
+            throw new Error("The email and name fields are madatory!"); 
+            // adding the error handling 
+        }
+        res.status(200).json({message: `Contact created`});
+        console.log(`The request body is: ${JSON.stringify(req.body)}`);
+        
     }
     catch (error){
         res.status(500).json({message: error.message});
@@ -56,4 +64,4 @@ const deleteContact = async (req, res)=>{
 }
 
 
-export default {getContacts, getContact,createContact, updateContact, deleteContact};
+export {getContacts, getContact,createContact, updateContact, deleteContact};
