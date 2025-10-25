@@ -15,7 +15,7 @@ const app = express();
 // loading the environment variables
 const port = process.env.PORT;
 
-app.use(morgan("dev"));
+app.use(morgan("combined"));
 app.use(express.json());
 app.use("/api/contacts", contactRoutes);
 app.use("/api/users", userRoutes);

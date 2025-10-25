@@ -3,22 +3,22 @@ const userSchema = mongoose.Schema({
     email : {
         type: String, 
         required : [true, "The email field is mandatory"],
-        unique : [true, "Use another Email"]
+        unique : true
     },
     username : {
         type : String,
-        unique :[true, 'Try another username']
+        unique : true
     },
     phone: {
-        type: Number,
-        unique :[true, 'Try another phone number']
+        type: String,  // Changed to String for better phone number handling
+        unique : true
     },
     password :{
         type: String,
-        required :[true , "The Password is required "]
+        required : [true , "The Password is required "]
     }
 
-}, {timestamps :true }
+}, { timestamps: true }
 );
 
-export default mongoose.Schema("User",userSchema);
+export default mongoose.model("User", userSchema); 
