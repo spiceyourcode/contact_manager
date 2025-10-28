@@ -54,7 +54,7 @@ const loginUser = asyncHandler(async (req, res) => {
             },
             process.env['ACCESS_TOKEN_SECRET'],
             {
-                expiresIn: "1m"
+                expiresIn: "5m"
             }
         );
         //condition to check the token 
