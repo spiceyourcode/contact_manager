@@ -1,3 +1,4 @@
+import validateToken from "../middleware/validateTokenHandler.js";
 import { Router } from "express";
 const router = Router();
 import { 
@@ -8,6 +9,7 @@ import {
     deleteContact,
 } from "../controllers/contactController.js";
 
+router.use(validateToken);
 // CRUD operation routes 
 router.get("/", getContacts);
 router.post("/", createContact);
