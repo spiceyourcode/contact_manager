@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler"
 import constants from "../constants.js";
 import User from "../models/userModel.js"
-import bcrypt from "bcryptjs/dist/bcrypt.js";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
@@ -16,7 +16,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error("all fields (email, username, phone and password) are required");
     }
     // hashing the password 
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
         email, username, phone, password: hashedPassword
@@ -40,37 +40,28 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new Error("The user with that email does not exist")
     }
     const isPasswordValid = bcrypt.compareSync(password, userAvailable.password);
-    if (!isPasswordValid && userAvailable.email !== email) {
-        res.status(constants.UNAUTHORIZED);
-        throw new Error("password or username is not valid");
-    } else {
+
+    if (userAvailable && isPasswordValid) {
         const accessToken = jwt.sign(
             {
                 user: {
                     username: userAvailable.username,
                     email: userAvailable.email,
                     id: userAvailable.id,
-                },
+                }
             },
-            process.env['ACCESS_TOKEN_SECRET'],
-            {
-                expiresIn: "5m"
-            }
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: "5m" }
         );
-        //condition to check the token 
-        if(!accessToken){
-            res.status(
-                constants.NOT_FOUND
-            ).json({
-                message: "no access token "
-            })
-        }
         res.status(constants.OK).json({
-            "message" : "User logged in sucessfully",
-            "Accesstoken" : `${accessToken}`
+            message: "User Logged in Successfully",
+            accessToken: accessToken
+        });
+    } else {
+        res.status(constants.UNAUTHORIZED).json({
+            message: "Invalid Credentials"
         });
     }
-
 
 });
 const currentUser = asyncHandler(async (req, res) => {

@@ -5,7 +5,7 @@ import Contact from "../models/contactModel.js";
 //@route GET /api/contacts
 //@access public
 const getContacts = asyncHandler(async (req, res) => {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({user_id: req.user.id});
     res.status(constants.OK).json(contacts);
 });
 
@@ -31,7 +31,7 @@ const createContact = asyncHandler(async (req, res)=>{
         throw new Error("The email, name and phone fields are madatory!"); 
     }
     const contact = await Contact.create({
-        name,email, phone
+        name,email, phone, user_id: req.user.id
     });
     res.status(constants.CREATED).json(contact);
     console.log(`The request body is: ${JSON.stringify(req.body)}`);
@@ -72,7 +72,7 @@ const deleteContact = asyncHandler(async (req, res)=>{
 export {
     getContacts,
     getContact,
-    createContact,
+    createContact,                                                                                                     
     updateContact,
     deleteContact
 };
