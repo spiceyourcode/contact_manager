@@ -21,7 +21,11 @@ app.use("/api/contacts", contactRoutes);
 app.use("/api/users", userRoutes);
 app.use(errorHandler);
 
-app.listen(port, () => {
+export { app };
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
     console.log(`Contact app listening at http://localhost:${port}`);
-})
+  });
+}
 
