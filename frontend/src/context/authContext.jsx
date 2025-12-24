@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import authService from "../api/authService";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(); //create the context for sharing the auth state
 
 export const AuthProvider = ({children}) =>{
     const [user, setUser] = useState(null);

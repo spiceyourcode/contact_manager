@@ -15,7 +15,7 @@ export default function Profile(){
             {user ? (
                 <div>
                     <p>Id: {user.id}</p>
-                    <p>Name: {user.username}</p>
+                    <p>Name: {user.name}</p>
                     <p>Email: {user.email}</p>
                 </div>
             ) : (
