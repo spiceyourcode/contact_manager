@@ -1,11 +1,14 @@
-import { Button } from "@/components/ui/button"
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./context/authContext";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
-    <div className="flex min-h-svh flex-row items-center justify-center">
-      <Button>Click me</Button>
-    
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

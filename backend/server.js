@@ -2,6 +2,7 @@
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import cors from "cors";
 import contactRoutes from "./routes/contactRoutes.js";
 import userRoutes from "./routes/userRoutes.js"
 import errorHandler from "./middleware/errorHandler.js"
@@ -16,6 +17,10 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(morgan("combined"));
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  credentials: true
+}));
 app.use(express.json());
 app.use("/api/contacts", contactRoutes);
 app.use("/api/users", userRoutes);

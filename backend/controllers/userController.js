@@ -55,7 +55,12 @@ const loginUser = asyncHandler(async (req, res) => {
         );
         res.status(constants.OK).json({
             message: "User Logged in Successfully",
-            accessToken: accessToken
+            token: accessToken,
+            user: {
+                username: userAvailable.username,
+                email: userAvailable.email,
+                id: userAvailable.id
+            }
         });
     } else {
         res.status(constants.UNAUTHORIZED).json({
@@ -65,7 +70,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
 });
 const currentUser = asyncHandler(async (req, res) => {
-    res.status(constants.OK).json({message : "The current user"});
+    res.status(constants.OK).json({
+        message: "The current user",
+        user: req.user
+    });
 });
 
 export { registerUser, loginUser, currentUser };
