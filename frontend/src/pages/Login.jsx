@@ -1,8 +1,8 @@
 import { useState } from "react";
-import authService from "../api/authService.js";
-import useAuth from "../hooks/useAuth.js";
+import authService from "@/api/authService.js";
+import useAuth from "@/hooks/useAuth.js";
 import {useNavigate} from "react-router-dom";
-import { Button } from "../components/ui/Button";
+import { Button } from "@/components/ui/Button";
 
 function Login(){
     const [email, setEmail] = useState("");
