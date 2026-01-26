@@ -1,7 +1,7 @@
-import { createContext, useEffect, useState } from "react";
+//this is a react contecxt to share auth state across the app
+import { useEffect, useState } from "react";
 import authService from "../api/authService";
-
-export const AuthContext = createContext(); //create the context for sharing the auth state
+import { AuthContext } from "./AuthContextObject";
 
 export const AuthProvider = ({children}) =>{
     const [user, setUser] = useState(null);
@@ -19,6 +19,7 @@ export const AuthProvider = ({children}) =>{
                     setUser(null);
                 }
             } catch(error){
+                console.log(error)
                 logout();
             } finally{
                 setLoading(false);
