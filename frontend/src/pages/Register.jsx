@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import authService from "@/api/authService.js";
 import { LoginForm } from "../components/login-form";
+import signUpIllustration from "../assets/Sign-up-pana.svg";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -57,7 +58,7 @@ export default function Register() {
             </div>
             <div className="bg-muted relative hidden lg:block">
                 <img
-                    src="/placeholder.svg"
+                    src={signUpIllustration}
                     alt="Image"
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
                 />

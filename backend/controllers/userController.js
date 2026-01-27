@@ -43,7 +43,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (userAvailable && isPasswordValid) {
         const accessToken = jwt.sign(
-            {
+            { 
                 user: {
                     username: userAvailable.username,
                     email: userAvailable.email,

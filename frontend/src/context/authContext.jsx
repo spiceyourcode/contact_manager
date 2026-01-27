@@ -1,7 +1,7 @@
-//this is a react contecxt to share auth state across the app
-import { useEffect, useState } from "react";
+//this is a react context to share auth state across the app
+import { createContext, useEffect, useState } from "react";
 import authService from "../api/authService";
-import { AuthContext } from "./AuthContextObject";
+export const AuthContext = createContext(); //create the context for sharing the auth state
 
 export const AuthProvider = ({children}) =>{
     const [user, setUser] = useState(null);
@@ -15,6 +15,7 @@ export const AuthProvider = ({children}) =>{
                 if(token){
                     const res = await authService.currentUser();
                     setUser(res.data.user || res.data); // Handle both response formats
+                    console.log("User loaded:", res.data);
                 } else {
                     setUser(null);
                 }
