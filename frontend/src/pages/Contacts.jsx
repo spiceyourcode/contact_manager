@@ -8,6 +8,7 @@ import {
   User,
   LogIn,
   UserPlus,
+  UserRoundPlus,
   Scroll,
 } from "lucide-react";
 import {
@@ -150,52 +151,48 @@ export default function Contacts() {
         </div>
       </nav>
 
-      {/* Sidebar */}
-      <aside className="flex w-80 flex-col bg-slate-50 text-slate-500 border-2 rounded-4xl max-w-6xl absolute left-10 top-40 h-[calc(90vh-100px)] p-4 gap-4">
-        <div className="flex justify-center flex-col items-center">
-          <h1 className="text-xl font-semibold mb-4">ContactHub</h1>
+      {(() => {
+        const groups = contacts.reduce((acc, c) => {
+          const letter =
+            c && c.name && c.name.charAt(0)
+              ? c.name.charAt(0).toUpperCase()
+              : "#";
+          if (!acc[letter]) acc[letter] = [];
+          acc[letter].push(c);
+          return acc;
+        }, {});
 
-          <div className="flex w-full mb-4">
-            <span className="mr-3 ms-3">Total Contacts</span>
-            <span className="text-black bg-white px-2 rounded-full">
-              {contacts.length}
-            </span>
-          </div>
-          <div>
-            <search></search>
-            <input placeholder="Search contacts..." type="text" name="" id="" />
-          </div>
-        </div>
-       
-        <ScrollArea className="h-[calc(100vh-200px)]">
-          {
-            // build a sorted list of first-letter groups (use '#' for empty/non-letter names)
-            Array.from(
-              new Set(
-                contacts.map((c) =>
-                  c.name && c.name.charAt(0)
-                    ? c.name.charAt(0).toUpperCase()
-                    : "#",
-                ),
-              ),
-            )
-              .sort()
-              .map((letter) => (
-                <div key={letter} className="mb-2">
-                  <span className="relative left-4">{letter}</span>
-                  <Separator className="my-2" />
+        const sortedLetters = Object.keys(groups).sort();
 
-                  {contacts
-                    .filter(
-                      (c) =>
-                        (c.name && c.name.charAt(0)
-                          ? c.name.charAt(0).toUpperCase()
-                          : "#") === letter,
-                    )
-                    .map((c) => (
+        return (
+          <>
+            {/* Sidebar */}
+            <aside className="flex w-80 flex-col bg-slate-50 text-slate-500 border-2 rounded-4xl max-w-6xl absolute left-10 top-40 h-[calc(90vh-100px)] p-4 gap-4">
+              <div className="flex justify-center flex-col items-center">
+                <h1 className="text-xl font-semibold mb-4">ContactHub</h1>
+
+                <div className="flex w-full mb-4">
+                  <span className="mr-3 ms-3">Total Contacts</span>
+                  <span className="text-black bg-white px-2 rounded-full">
+                    {contacts.length}
+                  </span>
+                </div>
+                <div>
+                  <search></search>
+                  <input placeholder="Search contacts..." type="text" name="" id="" />
+                </div>
+              </div>
+
+              <ScrollArea className="h-[calc(100vh-200px)]">
+                {sortedLetters.map((letter) => (
+                  <div key={letter} className="mb-2">
+                    <span className="relative left-4">{letter}</span>
+                    <Separator className="my-2" />
+
+                    {groups[letter].map((c) => (
                       <div
                         key={c._id}
-                        className="flex gap-1 justify-start items-center p-2 hover:bg-gray-100 rounded-md"
+                        className="flex gap-1 justify-start items-center p-2 hover:rounded-full hover:bg-blue-100 rounded-md"
                       >
                         <div>
                           <Avatar className="h-8 w-8 bg-gray-500 text-white text-center grid content-center">
@@ -207,76 +204,18 @@ export default function Contacts() {
                         </div>
                       </div>
                     ))}
-                </div>
-              ))
-          }
-        </ScrollArea>
-      </aside>
+                  </div>
+                ))}
+              </ScrollArea>
 
-      {/* <div>
-            <h2>Contacts</h2>
-            <input
-          value={name}
-          placeholder="name"
-          onChange={(e) => {
-            setName(e.target.value);
-          }}
-            />
-            <input
-          value={phone}
-          placeholder="phone"
-          onChange={(e) => {
-            setPhone(e.target.value);
-          }}
-            />
-            <input
-          value={email}
-          placeholder="email"
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-            />
-            <Button onClick={add}>Add</Button>
-
-            <ul>
-          {contacts.map((c) => (
-            <li key={c._id}>
-              {editingId === c._id ? (
-            <>
-              <input
-                value={editForm.name}
-                onChange={(e) => {
-              setEditForm({ ...editForm, name: e.target.value });
-                }}
-              />
-              <input
-                value={editForm.email}
-                onChange={(e) => {
-              setEditForm({ ...editForm, email: e.target.value });
-                }}
-              />
-              <input
-                value={editForm.phone}
-                onChange={(e) => {
-              setEditForm({ ...editForm, phone: e.target.value });
-                }}
-              />
-              <Button onClick={() => saveEdit(c._id)}>Save</Button>
-              <Button onClick={() => setEditingId(null)}>Cancel</Button>
-            </>
-              ) : (
-            <>
-              <span>{c.name}</span>
-              <span>{c.email}</span>
-              <span>{c.phone}</span>
-              <Button onClick={() => startEdit(c._id)}>Edit</Button>
-              <Button onClick={() => remove(c._id)}>Delete</Button>
-            </>
-              )}
-            </li>
-          ))}
-            </ul>
-          </div> */}
+              <button className="flex justify-center items-center gap-2 mt-4 p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 cursor-pointer">
+                <UserRoundPlus className="h-5 w-5 mr-12" />
+                Add Contact
+              </button>
+            </aside>
+          </>
+        );
+      })()}}
     </>
   );
 }
