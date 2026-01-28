@@ -1,15 +1,32 @@
 import { useEffect, useState } from "react";
 import contactService from "../api/contactService.js";
 import { Button } from "../components/ui/Button";
+import { Link } from "react-router-dom";
+import {
+  Home as HomeIcon,
+  Users,
+  User,
+  LogIn,
+  UserPlus,
+  Scroll,
+} from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+} from "../components/ui/navigation-menu.jsx";
+import { ScrollArea } from "../components/ui/scroll-area.jsx";
+import { Separator } from "../components/ui/separator.jsx";
+import { Avatar } from "../components/ui/avatar.jsx";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  // const [name, setName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [phone, setPhone] = useState("");
 
-  const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ name: "", email: "", phone: "" });
+  // const [editingId, setEditingId] = useState(null);
+  // const [editForm, setEditForm] = useState({ name: "", email: "", phone: "" });
 
   const load = async () => {
     const res = await contactService.getContacts();
@@ -19,108 +36,247 @@ export default function Contacts() {
     load();
   }, []);
 
-  const add = async () => {
-    try {
-      await contactService.createContact({ name, email, phone });
-      setName("");
-      setEmail("");
-      setPhone("");
-      load();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const startEdit = (contactId) => {
-    setEditingId(contactId);
-    const contact = contacts.find((c) => c._id === contactId);
-    if (contact) {
-      setEditForm({
-        name: contact.name,
-        email: contact.email,
-        phone: contact.phone,
-      });
-    }
-  };
-  const saveEdit = async () => {
-    try {
-      await contactService.updateContact(editingId, editForm);
-      setEditingId(null);
-      setEditForm({ name: "", email: "", phone: "" });
-      load();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const add = async () => {
+  //   try {
+  //     await contactService.createContact({ name, email, phone });
+  //     setName("");
+  //     setEmail("");
+  //     setPhone("");
+  //     load();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  // const startEdit = (contactId) => {
+  //   setEditingId(contactId);
+  //   const contact = contacts.find((c) => c._id === contactId);
+  //   if (contact) {
+  //     setEditForm({
+  //       name: contact.name,
+  //       email: contact.email,
+  //       phone: contact.phone,
+  //     });
+  //   }
+  // };
+  // const saveEdit = async () => {
+  //   try {
+  //     await contactService.updateContact(editingId, editForm);
+  //     setEditingId(null);
+  //     setEditForm({ name: "", email: "", phone: "" });
+  //     load();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const remove = async (id) => {
-    await contactService.deleteContact(id);
-    load();
-  };
+  // const remove = async (id) => {
+  //   await contactService.deleteContact(id);
+  //   load();
+  // };
 
   return (
-    <div>
-      <h2>Contacts</h2>
-      <input
-        value={name}
-        placeholder="name"
-        onChange={(e) => {
-          setName(e.target.value);
-        }}
-      />
-      <input
-        value={phone}
-        placeholder="phone"
-        onChange={(e) => {
-          setPhone(e.target.value);
-        }}
-      />
-      <input
-        value={email}
-        placeholder="email"
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
-      />
-      <Button onClick={add}>Add</Button>
+    <>
+      {/* Navbar */}
+      <nav className="border-b bg-slate-50 text-slate-900 shadow-sm mt-10 border-2 rounded-full max-w-6xl m-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Link
+                to="/"
+                className="text-2xl font-bold text-gray-900 hover:text-gray-700"
+              >
+                Contact Manager
+              </Link>
+            </div>
 
-      <ul>
-        {contacts.map((c) => (
-          <li key={c._id}>
-            {editingId === c._id ? (
-              <>
-                <input
-                  value={editForm.name}
-                  onChange={(e) => {
-                    setEditForm({ ...editForm, name: e.target.value });
-                  }}
-                />
-                <input
-                  value={editForm.email}
-                  onChange={(e) => {
-                    setEditForm({ ...editForm, email: e.target.value });
-                  }}
-                />
-                <input
-                  value={editForm.phone}
-                  onChange={(e) => {
-                    setEditForm({ ...editForm, phone: e.target.value });
-                  }}
-                />
-                <Button onClick={() => saveEdit(c._id)}>Save</Button>
-                <Button onClick={() => setEditingId(null)}>Cancel</Button>
-              </>
-            ) : (
-              <>
-                <span>{c.name}</span>
-                <span>{c.email}</span>
-                <span>{c.phone}</span>
-                <Button onClick={() => startEdit(c._id)}>Edit</Button>
-                <Button onClick={() => remove(c._id)}>Delete</Button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+            {/* Navigation Links */}
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList className="gap-6">
+                <NavigationMenuItem>
+                  <Link
+                    to="/"
+                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    <HomeIcon className="h-4 w-4" />
+                    Home
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    to="/contacts"
+                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    <Users className="h-4 w-4" />
+                    Contacts
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    <User className="h-4 w-4" />
+                    Profile
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              <Link to="/login">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <LogIn className="h-4 w-4" />
+                  Login
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Register
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Sidebar */}
+      <aside className="flex w-80 flex-col bg-slate-50 text-slate-500 border-2 rounded-4xl max-w-6xl absolute left-10 top-40 h-[calc(90vh-100px)] p-4 gap-4">
+        <div className="flex justify-center flex-col items-center">
+          <h1 className="text-xl font-semibold mb-4">ContactHub</h1>
+
+          <div className="flex w-full mb-4">
+            <span className="mr-3 ms-3">Total Contacts</span>
+            <span className="text-black bg-white px-2 rounded-full">
+              {contacts.length}
+            </span>
+          </div>
+          <div>
+            <search></search>
+            <input placeholder="Search contacts..." type="text" name="" id="" />
+          </div>
+        </div>
+       
+        <ScrollArea className="h-[calc(100vh-200px)]">
+          {
+            // build a sorted list of first-letter groups (use '#' for empty/non-letter names)
+            Array.from(
+              new Set(
+                contacts.map((c) =>
+                  c.name && c.name.charAt(0)
+                    ? c.name.charAt(0).toUpperCase()
+                    : "#",
+                ),
+              ),
+            )
+              .sort()
+              .map((letter) => (
+                <div key={letter} className="mb-2">
+                  <span className="relative left-4">{letter}</span>
+                  <Separator className="my-2" />
+
+                  {contacts
+                    .filter(
+                      (c) =>
+                        (c.name && c.name.charAt(0)
+                          ? c.name.charAt(0).toUpperCase()
+                          : "#") === letter,
+                    )
+                    .map((c) => (
+                      <div
+                        key={c._id}
+                        className="flex gap-1 justify-start items-center p-2 hover:bg-gray-100 rounded-md"
+                      >
+                        <div>
+                          <Avatar className="h-8 w-8 bg-gray-500 text-white text-center grid content-center">
+                            {c.name ? c.name.charAt(0).toUpperCase() : "#"}
+                          </Avatar>
+                        </div>
+                        <div>
+                          <span className="ml-2">{c.name}</span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ))
+          }
+        </ScrollArea>
+      </aside>
+
+      {/* <div>
+            <h2>Contacts</h2>
+            <input
+          value={name}
+          placeholder="name"
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
+            />
+            <input
+          value={phone}
+          placeholder="phone"
+          onChange={(e) => {
+            setPhone(e.target.value);
+          }}
+            />
+            <input
+          value={email}
+          placeholder="email"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+            />
+            <Button onClick={add}>Add</Button>
+
+            <ul>
+          {contacts.map((c) => (
+            <li key={c._id}>
+              {editingId === c._id ? (
+            <>
+              <input
+                value={editForm.name}
+                onChange={(e) => {
+              setEditForm({ ...editForm, name: e.target.value });
+                }}
+              />
+              <input
+                value={editForm.email}
+                onChange={(e) => {
+              setEditForm({ ...editForm, email: e.target.value });
+                }}
+              />
+              <input
+                value={editForm.phone}
+                onChange={(e) => {
+              setEditForm({ ...editForm, phone: e.target.value });
+                }}
+              />
+              <Button onClick={() => saveEdit(c._id)}>Save</Button>
+              <Button onClick={() => setEditingId(null)}>Cancel</Button>
+            </>
+              ) : (
+            <>
+              <span>{c.name}</span>
+              <span>{c.email}</span>
+              <span>{c.phone}</span>
+              <Button onClick={() => startEdit(c._id)}>Edit</Button>
+              <Button onClick={() => remove(c._id)}>Delete</Button>
+            </>
+              )}
+            </li>
+          ))}
+            </ul>
+          </div> */}
+    </>
   );
 }
