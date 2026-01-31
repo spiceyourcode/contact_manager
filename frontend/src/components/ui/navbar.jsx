@@ -33,11 +33,13 @@ export function Navbar() {
 
           {/* Navigation Links */}
           <NavigationMenu className="hidden md:flex">
+            {
+              user? 
             <NavigationMenuList className="gap-6">
               <NavigationMenuItem>
                 <Link
                   to="/"
-                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="hover:bg-blue-300 transition-colors ease-in flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   <HomeIcon className="h-4 w-4" />
                   Home
@@ -46,7 +48,7 @@ export function Navbar() {
               <NavigationMenuItem>
                 <Link
                   to="/contacts"
-                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className=" hover:bg-blue-300 transition-colors ease-in flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   <Users className="h-4 w-4" />
                   Contacts
@@ -55,13 +57,15 @@ export function Navbar() {
               <NavigationMenuItem>
                 <Link
                   to="/profile"
-                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="hover:bg-blue-300 transition-colors ease-in  flex items-center gap-2 text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   <User className="h-4 w-4" />
                   Profile
                 </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
+              : null
+            }
           </NavigationMenu>
 
           {/* Action Buttons */}

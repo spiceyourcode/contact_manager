@@ -28,7 +28,7 @@ function Login() {
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2  sm:justify-start lg:ml-45">
-          <a href="#" className="flex items-center gap-2 font-medium ">
+          <a href="/" className="flex items-center gap-2 font-medium ">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <div className="size-4" />
             </div>
