@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import contactService from "../api/contactService.js";
 import { Button } from "../components/ui/Button";
-import { Link } from "react-router-dom";
 import {
   UserRoundPlus,
   Phone,
@@ -16,9 +15,17 @@ import { Avatar } from "../components/ui/avatar.jsx";
 import { Card, CardContent } from "../components/ui/card.jsx";
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet.jsx";
 import { Navbar } from "../components/ui/navbar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog.jsx";
+import AddContactForm from "../components/add-contact-form.jsx";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([]);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const load = async () => {
     const res = await contactService.getContacts();
@@ -80,7 +87,10 @@ export default function Contacts() {
       </ScrollArea>
 
       <div className="p-4 border-t">
-        <button className="flex justify-center items-center gap-2 w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer transition-colors">
+        <button 
+          onClick={() => setIsAddDialogOpen(true)}
+          className="flex justify-center items-center gap-2 w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer transition-colors"
+        >
           <UserRoundPlus className="h-5 w-5" />
           Add Contact
         </button>
@@ -201,6 +211,19 @@ export default function Contacts() {
         </main>
       </div>
     </div>
+
+    {/* Add Contact Dialog */}
+    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add New Contact</DialogTitle>
+        </DialogHeader>
+        <AddContactForm 
+          onSuccess={load}
+          onClose={() => setIsAddDialogOpen(false)}
+        />
+      </DialogContent>
+    </Dialog>
     </>
   );
 }

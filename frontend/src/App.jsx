@@ -8,7 +8,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <AppRoutes />
-        <Toaster position="top-center" />
+        <Toaster position="bottom-right" />
       </BrowserRouter>
     </AuthProvider>
   )
