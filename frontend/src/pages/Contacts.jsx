@@ -25,11 +25,23 @@ import AddContactForm from "../components/add-contact-form.jsx";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+  const [isSaving, setIsSaving] = useState(false);
 
   const load = async () => {
     const res = await contactService.getContacts();
     setContacts(res.data);
+    // Select first contact by default
+    if (res.data.length > 0 && !selectedContact) {
+      setSelectedContact(res.data[0]);
+    }
   };
   useEffect(() => {
     load();
@@ -74,9 +86,22 @@ export default function Contacts() {
             {groups[letter].map((c) => (
               <div
                 key={c._id}
-                className="flex gap-2 justify-start items-center p-2 hover:rounded-full hover:bg-blue-100 rounded-md cursor-pointer transition-colors"
+                onClick={() => {
+                  setSelectedContact(c);
+                  setIsEditMode(false);
+                  setEditFormData({ name: "", email: "", phone: "" });
+                }}
+                className={`flex gap-2 justify-start items-center p-2 rounded-full cursor-pointer transition-colors ${
+                  selectedContact?._id === c._id
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-blue-100"
+                }`}
               >
-                <Avatar className="h-8 w-8 bg-gray-500 text-white text-center grid content-center flex-shrink-0">
+                <Avatar className={`h-8 w-8 text-center grid content-center flex-shrink-0 ${
+                  selectedContact?._id === c._id
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-500 text-white"
+                }`}>
                   {c.name ? c.name.charAt(0).toUpperCase() : "#"}
                 </Avatar>
                 <span className="ml-2 text-sm truncate">{c.name}</span>
@@ -127,86 +152,172 @@ export default function Contacts() {
         <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
           {/* Header */}
           <header className="flex items-center justify-between px-4 md:px-8 py-4 bg-white border-b">
-            <h2 className="text-lg md:text-2xl font-bold truncate">Jane Doe</h2>
+            <h2 className="text-lg md:text-2xl font-bold truncate">
+              {selectedContact?.name || "Select a Contact"}
+            </h2>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="hidden sm:flex">
-                Edit
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="hidden sm:flex"
+                onClick={() => {
+                  if (isEditMode) {
+                    setIsEditMode(false);
+                  } else {
+                    setEditFormData({
+                      name: selectedContact?.name || "",
+                      email: selectedContact?.email || "",
+                      phone: selectedContact?.phone || "",
+                    });
+                    setIsEditMode(true);
+                  }
+                }}
+              >
+                {isEditMode ? "Cancel" : "Edit"}
               </Button>
-              <Button size="sm">Save</Button>
+              <Button 
+                size="sm"
+                onClick={async () => {
+                  if (isEditMode && selectedContact) {
+                    setIsSaving(true);
+                    try {
+                      await contactService.updateContact(selectedContact._id, editFormData);
+                      setSelectedContact({ ...selectedContact, ...editFormData });
+                      setIsEditMode(false);
+                      await load();
+                    } catch (error) {
+                      console.error("Failed to update contact", error);
+                    } finally {
+                      setIsSaving(false);
+                    }
+                  }
+                }}
+                disabled={isSaving}
+              >
+                {isSaving ? "Saving..." : "Save"}
+              </Button>
             </div>
           </header>
 
           {/* Content */}
           <div className="p-4 md:p-8 space-y-6 flex-1">
-            {/* Profile Card */}
-            <Card className="rounded-2xl md:rounded-3xl border-none shadow-md bg-yellow-50">
-              <CardContent className="p-6 md:p-10 flex flex-col items-center gap-6">
-                <Avatar className="h-24 w-24 md:h-32 md:w-32 bg-gray-500 text-white text-center flex justify-center items-center flex-shrink-0">
-                  <UserRoundPlus className="h-12 w-12 md:h-16 md:w-16" />
-                </Avatar>
-                <div className="text-center w-full">
-                  <h2 className="text-xl md:text-3xl font-bold mb-2">Jane Doe</h2>
-                  <p className="text-slate-600 text-sm md:text-base mb-4">
-                    jane.doe@example.com
-                  </p>
-                  <p className="text-slate-600 text-sm md:text-base mb-4">
-                    (123) 456-7890
-                  </p>
-                  <Separator className="mx-auto max-w-60 mb-6" />
+            {selectedContact ? (
+              <>
+                {/* Profile Card */}
+                <Card className="rounded-2xl md:rounded-3xl border-none shadow-md bg-yellow-50">
+                  <CardContent className="p-6 md:p-10 flex flex-col items-center gap-6">
+                    <Avatar className="h-24 w-24 md:h-32 md:w-32 bg-gray-500 text-white text-center flex justify-center items-center flex-shrink-0">
+                      {selectedContact.name ? selectedContact.name.charAt(0).toUpperCase() : "#"}
+                    </Avatar>
+                    <div className="text-center w-full">
+                      {isEditMode ? (
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm font-medium text-slate-600">Name</label>
+                            <input
+                              type="text"
+                              value={editFormData.name}
+                              onChange={(e) =>
+                                setEditFormData({ ...editFormData, name: e.target.value })
+                              }
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-sm font-medium text-slate-600">Email</label>
+                            <input
+                              type="email"
+                              value={editFormData.email}
+                              onChange={(e) =>
+                                setEditFormData({ ...editFormData, email: e.target.value })
+                              }
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-sm font-medium text-slate-600">Phone</label>
+                            <input
+                              type="tel"
+                              value={editFormData.phone}
+                              onChange={(e) =>
+                                setEditFormData({ ...editFormData, phone: e.target.value })
+                              }
+                              className="w-full px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <h2 className="text-xl md:text-3xl font-bold mb-2">{selectedContact.name}</h2>
+                          <p className="text-slate-600 text-sm md:text-base mb-4">
+                            {selectedContact.email}
+                          </p>
+                          <p className="text-slate-600 text-sm md:text-base mb-4">
+                            {selectedContact.phone}
+                          </p>
+                          <Separator className="mx-auto max-w-60 mb-6" />
 
-                  {/* Action Buttons */}
-                  <div className="grid grid-cols-3 gap-2 md:gap-4 w-full max-w-sm mx-auto">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex flex-col items-center gap-1 h-auto py-2"
-                    >
-                      <SquarePen className="h-6 w-6 md:h-8 md:w-8" />
-                      <span className="text-xs">Edit</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex flex-col items-center gap-1 h-auto py-2"
-                    >
-                      <MessageSquareMore className="h-6 w-6 md:h-8 md:w-8" />
-                      <span className="text-xs">Message</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex flex-col items-center gap-1 h-auto py-2"
-                    >
-                      <Phone className="h-6 w-6 md:h-8 md:w-8" />
-                      <span className="text-xs">Call</span>
-                    </Button>
-                  </div>
+                          {/* Action Buttons */}
+                          <div className="grid grid-cols-3 gap-2 md:gap-4 w-full max-w-sm mx-auto">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="flex flex-col items-center gap-1 h-auto py-2"
+                            >
+                              <SquarePen className="h-6 w-6 md:h-8 md:w-8" />
+                              <span className="text-xs">Edit</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="flex flex-col items-center gap-1 h-auto py-2"
+                            >
+                              <MessageSquareMore className="h-6 w-6 md:h-8 md:w-8" />
+                              <span className="text-xs">Message</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="flex flex-col items-center gap-1 h-auto py-2"
+                            >
+                              <Phone className="h-6 w-6 md:h-8 md:w-8" />
+                              <span className="text-xs">Call</span>
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Info Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* History Section */}
+                  <Card className="border shadow-sm rounded-2xl">
+                    <CardContent className="p-6">
+                      <h3 className="font-bold mb-4">History</h3>
+                      <p className="text-sm text-slate-400">
+                        Last contact: 2 hours ago via Call
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  {/* Notes Section */}
+                  <Card className="border shadow-sm rounded-2xl">
+                    <CardContent className="p-6">
+                      <h3 className="font-bold mb-4">Notes</h3>
+                      <p className="text-sm text-slate-400">
+                        No notes added yet
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Info Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* History Section */}
-              <Card className="border shadow-sm rounded-2xl">
-                <CardContent className="p-6">
-                  <h3 className="font-bold mb-4">History</h3>
-                  <p className="text-sm text-slate-400">
-                    Last contact: 2 hours ago via Call
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Notes Section */}
-              <Card className="border shadow-sm rounded-2xl">
-                <CardContent className="p-6">
-                  <h3 className="font-bold mb-4">Notes</h3>
-                  <p className="text-sm text-slate-400">
-                    No notes added yet
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-slate-400 text-lg">Select a contact to view details</p>
+              </div>
+            )}
           </div>
         </main>
       </div>
