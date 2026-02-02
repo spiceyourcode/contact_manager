@@ -125,24 +125,10 @@ export default function Contacts() {
 
   return (
     <>
-    <Navbar/>
+    <Navbar sidebarContent={<SidebarContent />} />
     <div className="flex h-screen w-full flex-col bg-white mt-6">
 
       <div className="flex flex-1 overflow-hidden">
-        {/* MOBILE NAV (Visible only on small screens) */}
-        <div className="md:hidden absolute top-20 left-4 z-50">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-80">
-              <SidebarContent />
-            </SheetContent>
-          </Sheet>
-        </div>
-
         {/* DESKTOP SIDEBAR (Hidden on mobile) */}
         <aside className="hidden md:flex w-80 flex-col bg-slate-50 text-slate-500 border-r rounded-r-2xl">
           <SidebarContent />
@@ -212,7 +198,7 @@ export default function Contacts() {
                     <div className="text-center w-full">
                       {isEditMode ? (
                         <div className="space-y-4">
-                          <div>
+                          <div className="block space-y-4 lg:flex lg:space-y-0 lg:gap-6 lg:items-center justify-center">
                             <label className="text-sm font-medium text-slate-600">Name</label>
                             <input
                               type="text"
@@ -220,10 +206,10 @@ export default function Contacts() {
                               onChange={(e) =>
                                 setEditFormData({ ...editFormData, name: e.target.value })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
+                              className="w-[200px] px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
                             />
                           </div>
-                          <div>
+                          <div className="block lg:flex lg:space-y-0 lg:gap-6 lg:items-center justify-center">
                             <label className="text-sm font-medium text-slate-600">Email</label>
                             <input
                               type="email"
@@ -231,10 +217,10 @@ export default function Contacts() {
                               onChange={(e) =>
                                 setEditFormData({ ...editFormData, email: e.target.value })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
+                              className="w-[200px] px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
                             />
                           </div>
-                          <div>
+                          <div className="block lg:flex lg:space-y-0 lg:gap-6 lg:items-center justify-center">
                             <label className="text-sm font-medium text-slate-600">Phone</label>
                             <input
                               type="tel"
@@ -242,7 +228,7 @@ export default function Contacts() {
                               onChange={(e) =>
                                 setEditFormData({ ...editFormData, phone: e.target.value })
                               }
-                              className="w-full px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
+                              className="w-[200px] px-3 py-2 border border-slate-300 rounded-md text-slate-700 mt-1"
                             />
                           </div>
                         </div>

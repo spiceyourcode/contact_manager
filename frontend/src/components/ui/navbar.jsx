@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Home as HomeIcon,
   Users,
   User,
   LogIn,
   UserPlus,
+  Menu
 } from "lucide-react";
 import {
   NavigationMenu,
@@ -13,14 +14,57 @@ import {
   NavigationMenuItem,
 } from "@/components/ui/navigation-menu";
 import useAuth from "../../hooks/useAuth.js";
-
-export function Navbar() {
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.jsx";
+export function Navbar({ sidebarContent = null }) {
   const { user, logout } = useAuth();
 
   return (
     <nav className="border-b bg-white shadow-sm mt-10 border-2 rounded-full max-w-6xl m-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-80">
+              {sidebarContent || (
+                <div className="p-4 space-y-4">
+                  <nav className="space-y-2">
+                    {user && (
+                      <>
+                        <Link
+                          to="/"
+                          className="flex items-center gap-2 text-gray-700 hover:bg-blue-100 px-3 py-2 rounded-md text-sm font-medium"
+                        >
+                          <HomeIcon className="h-4 w-4" />
+                          Home
+                        </Link>
+                        <Link
+                          to="/contacts"
+                          className="flex items-center gap-2 text-gray-700 hover:bg-blue-100 px-3 py-2 rounded-md text-sm font-medium"
+                        >
+                          <Users className="h-4 w-4" />
+                          Contacts
+                        </Link>
+                        <Link
+                          to="/profile"
+                          className="flex items-center gap-2 text-gray-700 hover:bg-blue-100 px-3 py-2 rounded-md text-sm font-medium"
+                        >
+                          <User className="h-4 w-4" />
+                          Profile
+                        </Link>
+                      </>
+                    )}
+                  </nav>
+                </div>
+              )}
+            </SheetContent>
+          </Sheet>
+        </div>
+
           {/* Logo */}
           <div className="flex items-center">
             <Link
