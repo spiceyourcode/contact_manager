@@ -249,6 +249,14 @@ export default function Contacts() {
                               variant="ghost"
                               size="sm"
                               className="flex flex-col items-center gap-1 h-auto py-2"
+                              onClick={() => {
+                                setEditFormData({
+                                  name: selectedContact?.name || "",
+                                  email: selectedContact?.email || "",
+                                  phone: selectedContact?.phone || "",
+                                });
+                                setIsEditMode(true);
+                              }}
                             >
                               <SquarePen className="h-6 w-6 md:h-8 md:w-8" />
                               <span className="text-xs">Edit</span>
