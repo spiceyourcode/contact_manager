@@ -51,19 +51,8 @@ export default function Profile() {
     return (
         <>
             <Navbar />
-
+            
             <Card className="max-w-4xl mx-auto mt-10 shadow-sm rounded-4xl border-none bg-gray-200">
-                <CardHeader>
-                    <CardTitle>
-                        <h2>Profile</h2>
-                    </CardTitle>
-
-                    <CardAction>
-                        <Button variant="ghost">
-                            <Ellipsis className="h-4 w-4" />
-                        </Button>
-                    </CardAction>
-                </CardHeader>
                 <CardContent>
                     <div className="flex flex-row gap-12 items-center">
                         <div>
