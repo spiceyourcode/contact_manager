@@ -16,4 +16,8 @@ function currentUser(){
         });
 }
 
-export default { loginUser, registerUser, currentUser};
+function changePassword(data){
+    return api.put('users/change-password', data);
+}
+
+export default { loginUser, registerUser, currentUser, changePassword};

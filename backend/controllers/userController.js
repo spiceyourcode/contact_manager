@@ -76,4 +76,41 @@ const currentUser = asyncHandler(async (req, res) => {
     });
 });
 
-export { registerUser, loginUser, currentUser };
+
+// @desc change user password 
+// route POST /users/change-password
+// access private 
+
+const changePassword = asyncHandler(async(req, res) =>{
+    const {currentPassword, newPassword} = req.body;
+
+    if(!currentPassword || !newPassword){
+        res.status(constants.BAD_REQUEST);
+        throw new Error("Both the old and new passwords are required ");
+    }
+
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    
+    if(!user){
+        res.status(constants.NOT_FOUND);
+        throw new Error("User not found");
+    }
+
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if(!isCurrentPasswordValid){
+        res.status(constants.UNAUTHORIZED); 
+        throw new Error("Current password is incorrect")
+    }
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10)
+
+    user.password = hashedNewPassword; 
+    await user.save();
+
+    res.status(constants.OK).json({
+        message: "password changes successfully"
+    })
+})
+
+export { registerUser, loginUser, currentUser, changePassword };
