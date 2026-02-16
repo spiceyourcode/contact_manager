@@ -1,13 +1,8 @@
 import useAuth from "../hooks/useAuth.js";
 import { Button } from "../components/ui/Button";
-import { Link } from "react-router-dom";
-import {
-    Ellipsis,
-} from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import {
     Card,
-    CardAction,
     CardContent,
     CardHeader,
     CardTitle,
@@ -15,14 +10,21 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import contactService from "../api/contactService.js";
-import React, { useState, useEffect } from "react";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import authService from "../api/authService.js";
+import { useState, useEffect } from "react";
+import { Field , FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "../components/ui/navbar";
 
 export default function Profile() {
     const { user, logout, loading } = useAuth();
     const [contacts, setContacts] = useState([]);
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [changePasswordError, setChangePasswordError] = useState("");
+    const [changePasswordSuccess, setChangePasswordSuccess] = useState("");
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
 
     const loadContacts = async () => {
         try {
@@ -33,6 +35,57 @@ export default function Profile() {
         } catch (error) {
             console.error("Error loading contacts:", error);
             return [];
+        }
+    };
+
+    const handleChangePassword = async () => {
+        // Reset messages
+        setChangePasswordError("");
+        setChangePasswordSuccess("");
+
+        // Validation
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            setChangePasswordError("All password fields are required");
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setChangePasswordError("New password and confirmation do not match");
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            setChangePasswordError("New password must be at least 6 characters long");
+            return;
+        }
+
+        if (currentPassword === newPassword) {
+            setChangePasswordError("New password must be different from current password");
+            return;
+        }
+
+        setIsChangingPassword(true);
+
+        try {
+            const response = await authService.changePassword({
+                currentPassword,
+                newPassword
+            });
+
+            setChangePasswordSuccess("Password changed successfully!");
+            
+            // Clear form fields
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || 
+                               error.response?.data?.message || 
+                               "Failed to change password. Please try again.";
+            setChangePasswordError(errorMessage);
+        } finally {
+            setIsChangingPassword(false);
         }
     };
 
@@ -100,8 +153,7 @@ export default function Profile() {
                             </div>
                         </div>
                         {/* Change Password */}
-                        <div >
-                            {/* <span className="block">Change Your Password</span> */}
+                        <div >                    
                             <Field className="w-[350px]">
                                 <FieldLabel>Change Password</FieldLabel>
                                 <Input
@@ -116,7 +168,7 @@ export default function Profile() {
                                     type="password"
                                 />
                             </Field>
-                            <Button variant="default" size="sm" className="mt-4 rounded-3xl w-[150px]">
+                            <Button onClick={handleChangePassword} variant="default" size="sm" className="mt-4 rounded-3xl w-[150px]">
                                 Change Password
                             </Button>
                         </div>

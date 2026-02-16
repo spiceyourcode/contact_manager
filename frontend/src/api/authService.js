@@ -17,7 +17,7 @@ function currentUser(){
 }
 
 function changePassword(data){
-    return api.put('users/change-password', data);
+    return api.post('users/change-password', data);
 }
 
 export default { loginUser, registerUser, currentUser, changePassword};
