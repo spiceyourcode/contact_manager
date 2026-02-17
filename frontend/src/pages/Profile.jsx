@@ -14,6 +14,7 @@ import authService from "../api/authService.js";
 import { useState, useEffect } from "react";
 import { Field , FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { Navbar } from "../components/ui/navbar";
 
 export default function Profile() {
@@ -39,6 +40,7 @@ export default function Profile() {
     };
 
     const handleChangePassword = async () => {
+        console.log("Change password button clicked");
         // Reset messages
         setChangePasswordError("");
         setChangePasswordSuccess("");
@@ -67,12 +69,15 @@ export default function Profile() {
         setIsChangingPassword(true);
 
         try {
+            console.log("Calling changePassword API with:", { currentPassword, newPassword });
             const response = await authService.changePassword({
                 currentPassword,
                 newPassword
             });
+            console.log("Change password response:", response);
 
             setChangePasswordSuccess("Password changed successfully!");
+            toast.success("Password changed successfully!");
             
             // Clear form fields
             setCurrentPassword("");
@@ -80,10 +85,24 @@ export default function Profile() {
             setConfirmPassword("");
 
         } catch (error) {
-            const errorMessage = error.response?.data?.error || 
-                               error.response?.data?.message || 
-                               "Failed to change password. Please try again.";
+            console.error("Change password error:", error);
+            console.error("Error response:", error.response);
+            console.error("Error status:", error.response?.status);
+            
+            let errorMessage = "Failed to change password. Please try again.";
+            
+            if (error.response?.status === 401) {
+                errorMessage = "Current password is incorrect";
+            } else if (error.response?.data?.error) {
+                errorMessage = error.response.data.error;
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
             setChangePasswordError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsChangingPassword(false);
         }
@@ -153,23 +172,54 @@ export default function Profile() {
                             </div>
                         </div>
                         {/* Change Password */}
-                        <div >                    
+                        <div>
+                            <h3 className="text-lg font-semibold mb-4">Change Password</h3>
                             <Field className="w-[350px]">
-                                <FieldLabel>Change Password</FieldLabel>
+                                <FieldLabel>Current Password</FieldLabel>
                                 <Input
                                     className="border-black"
-                                    id="input-demo-api-key"
+                                    id="current-password"
                                     type="password"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                    disabled={isChangingPassword}
                                 />
-                                <FieldLabel>Confirm Password</FieldLabel>
+                                <FieldLabel>New Password</FieldLabel>
                                 <Input
                                     className="border-black"
-                                    id="input-demo-api-key"
+                                    id="new-password"
                                     type="password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    disabled={isChangingPassword}
+                                />
+                                <FieldLabel>Confirm New Password</FieldLabel>
+                                <Input
+                                    className="border-black"
+                                    id="confirm-password"
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    disabled={isChangingPassword}
                                 />
                             </Field>
-                            <Button onClick={handleChangePassword} variant="default" size="sm" className="mt-4 rounded-3xl w-[150px]">
-                                Change Password
+                            
+                            {changePasswordError && (
+                                <div className="text-red-500 text-sm mt-2">{changePasswordError}</div>
+                            )}
+                            
+                            {changePasswordSuccess && (
+                                <div className="text-green-500 text-sm mt-2">{changePasswordSuccess}</div>
+                            )}
+                            
+                            <Button 
+                                onClick={handleChangePassword} 
+                                variant="default" 
+                                size="sm" 
+                                className="mt-4 rounded-3xl w-[150px]"
+                                disabled={isChangingPassword}
+                            >
+                                {isChangingPassword ? "Changing..." : "Change Password"}
                             </Button>
                         </div>
                     </div>
