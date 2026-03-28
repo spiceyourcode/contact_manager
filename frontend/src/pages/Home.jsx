@@ -27,7 +27,7 @@ function Home() {
           </h1>
           <p className="text-base sm:text-lg text-gray-600">
             Bringing the best solutions to your device by enabling seamless
-            method to manage your contacts all in one place.
+            method to manage your contacts all in one place securely.
           </p>
           <Button
             onClick={userNavigate}
